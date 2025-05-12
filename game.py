@@ -50,6 +50,9 @@ class Game:
                     if row == 0 or col == 0 or col == 12 or col == 11:
                         continue
 
+                    if self.grid[row][col] == 1:
+                        continue
+
                     if 0 <= row < ROWS and 0 <= col < COLS:
                         self.grid[row][col] *= -1
 
