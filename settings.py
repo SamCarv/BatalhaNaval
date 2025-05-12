@@ -1,0 +1,27 @@
+import pygame
+
+WINDOW_WIDTH = 352
+WINDOW_HEIGHT = 352
+PIXEL = 32
+
+COLS = WINDOW_WIDTH // PIXEL
+ROWS = WINDOW_WIDTH // PIXEL
+
+BACKGROUND = (255, 255, 255)
+BATTLESHIP_COLOR = (255, 0, 0)
+WITHOUT_BATTLESHIP = (0, 0, 0)
+
+PLAYER_BACKGROUD = "assets/background/oceangrid.png"
+COOP_BACKGROUND = "assets/background/radargrid.png"
+
+BATTLE_SHIP1X2 = "assets/battle_ship/ship1x2.png"
+BATTLE_SHIP1X3_1 = "assets/battle_ship/ship1x3_1.png"
+BATTLE_SHIP1X3_2 = "assets/battle_ship/ship1x3_2.png"
+BATTLE_SHIP1X4 = "assets/battle_ship/ship1x4.png"
+BATTLE_SHIP1X5 = "assets/battle_ship/ship1x5.png"
+
+TOKEN_GREEN_HIT = "assets/tokens/hit-1.png"
+TOKEN_GREEN_MISS = "assets/tokens/miss-1.png"
+
+TOKEN_BLUE_HIT = "assets/tokens/hit-2.png"
+TOKEN_BLUE_MISS = "assets/tokens/miss-2.png"
