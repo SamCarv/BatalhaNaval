@@ -11,8 +11,8 @@ BACKGROUND = (255, 255, 255)
 BATTLESHIP_COLOR = (255, 0, 0)
 WITHOUT_BATTLESHIP = (0, 0, 0)
 
-PLAYER_BACKGROUD = "assets/background/oceangrid.png"
-COOP_BACKGROUND = "assets/background/radargrid.png"
+PLAYER_BACKGROUD = "assets/background/radargrid.png"
+COOP_BACKGROUND = "assets/background/oceangrid.png"
 
 BATTLE_SHIP1X2 = "assets/battle_ship/ship1x2.png"
 BATTLE_SHIP1X3_1 = "assets/battle_ship/ship1x3_1.png"
