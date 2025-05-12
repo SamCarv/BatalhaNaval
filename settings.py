@@ -25,3 +25,5 @@ TOKEN_GREEN_MISS = "assets/tokens/miss-1.png"
 
 TOKEN_BLUE_HIT = "assets/tokens/hit-2.png"
 TOKEN_BLUE_MISS = "assets/tokens/miss-2.png"
+
+TOKEN_TRANSPARENT = "assets/tokens/transparent.png"

@@ -11,34 +11,27 @@ class Orientation(Enum):
 class Battleship(pygame.sprite.Sprite):
     def __init__(self, img, size, x, y, orientation):
         super().__init__()
-        self.image = img
+        self.image = pygame.image.load(img).convert_alpha()
         self.size = size
         self.x = x
         self.y = y
         self.position = (x, y)
         self.orientation = orientation
-        self.length = len(img)
-        self.hit_positions = [False] * self.length
+        self.hit_positions = [False] * self.size
 
     def hit(self, position):
-        if position < 0 or position >= self.length:
+        if position < 0 or position >= self.size:
             raise ValueError("Invalid position")
         self.hit_positions[position] = True
 
     def is_sunk(self):
         return all(self.hit_positions)
     
-    def loadImage(path, size):
-        img = pygame.image.load(path).convert_alpha()
-        img = pygame.transform.scale(img, size)
-        return img
-    
     def draw(self, screen):
         if self.orientation == Orientation.HORIZONTAL:
-            for i in range(self.length):
-                screen.blit(self.image[i], (self.position[0] + i * PIXEL, self.position[1]))
+            rotated_image = pygame.transform.rotate(self.image, 90)
+            screen.blit(rotated_image, (self.x * PIXEL, self.y * PIXEL))
         else:
-            for i in range(self.length):
-                screen.blit(self.image[i], (self.position[0], self.position[1] + i * PIXEL))
+            screen.blit(self.image, (self.x * PIXEL, self.y * PIXEL))
 
     
