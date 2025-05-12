@@ -10,9 +10,20 @@ class Game:
         pygame.display.set_caption("Batalha Naval")
         self.clock = pygame.time.Clock()
 
+        background_image_size = 352
+        background_image_row = background_image_size // PIXEL
+        background_image_cow = background_image_size // PIXEL
+
         self.background = pygame.image.load(PLAYER_BACKGROUD).convert()
         self.background = pygame.transform.scale(
-            self.background, ((ROWS * PIXEL), (COLS * PIXEL))
+            self.background,
+            ((background_image_row * PIXEL), (background_image_cow * PIXEL)),
+        )
+
+        self.coop_background = pygame.image.load(COOP_BACKGROUND).convert()
+        self.coop_background = pygame.transform.scale(
+            self.coop_background,
+            (((background_image_row * PIXEL)), (background_image_cow * PIXEL)),
         )
 
         self.grid = [[-1 for _ in range(COLS)] for _ in range(ROWS)]
@@ -36,7 +47,7 @@ class Game:
                     row = mouse_y // (PIXEL)
                     col = mouse_x // (PIXEL)
 
-                    if row == 0 or col == 0:
+                    if row == 0 or col == 0 or col == 12 or col == 11:
                         continue
 
                     if 0 <= row < ROWS and 0 <= col < COLS:
@@ -66,6 +77,7 @@ class Game:
                                     battleship.hit(row - battleship.y)
 
             self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.coop_background, (384, 0))
 
             # Render Game
             # Carregas barcos
