@@ -20,7 +20,7 @@ class Token(pygame.sprite.Sprite):
                 tile = pygame.transform.scale(tile, (PIXEL, PIXEL))
                 screen.blit(tile, (self.x, self.y))
                 pygame.display.update()
-                pygame.time.delay(100)
+                pygame.time.delay(35)
             
         
     def draw(self, screen):

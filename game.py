@@ -144,13 +144,33 @@ class Game:
                         if self.bot_battleship_grid[bot_x][bot_y] == 0:
                             self.bot_battleship_grid_already_played[bot_x][bot_y] = 2
                             self.bot_view[bot_x][bot_y] = 0
+                            
 
+                            missToken = Token(
+                                TOKEN_BLUE_MISS,
+                                bot_y * PIXEL,
+                                bot_x * PIXEL,
+                                TOKEN_BLUE_MISS_LIST,
+                                13,
+                            )
+                            
+                            missToken.animate(self.screen)
+                            
                             self.turn = True
 
                         if self.bot_battleship_grid[bot_x][bot_y] == 1:
                             print("Achei o barco")
 
                             self.bot_view[bot_x][bot_y] = 1
+                            
+                            tokenHit = Token(
+                                TOKEN_BLUE_HIT,
+                                bot_y * PIXEL,
+                                bot_x * PIXEL,
+                                TOKEN_BLUE_HIT_LIST,
+                                13,
+                            )
+                            tokenHit.animate(self.screen)
 
                             self.turn = True
                             break
@@ -188,7 +208,10 @@ class Game:
                             text = pygame.font.SysFont(None, 32, bold=True).render(
                                 coordinate, 1, (255, 255, 255)
                             )
-                            self.screen.blit(text, (300, 370))
+                            pygame.draw.rect(self.screen, (0, 0, 0), (320, 370, 100, 30))
+                            font = pygame.font.SysFont(None, 32, bold=True)
+                            text = font.render(coordinate, True, (255, 255, 255))
+                            self.screen.blit(text, (330, 370))
 
                         if (
                             row == 0
@@ -240,7 +263,7 @@ class Game:
                                             col * PIXEL,
                                             row * PIXEL,
                                             TOKEN_GREEN_HIT_LIST,
-                                            3,
+                                            13,
                                         )
                                         hitToken.animate(self.screen)
                                         battleship.hit(col - battleship.x)
@@ -256,7 +279,7 @@ class Game:
                                             col * PIXEL,
                                             row * PIXEL,
                                             TOKEN_GREEN_HIT_LIST,
-                                            3,
+                                            13,
                                         )
                                         hitToken.animate(self.screen)
                                         battleship.hit(row - battleship.y)
@@ -281,13 +304,13 @@ class Game:
                         tile = Token(TOKEN_GREEN_MISS, x, y)
                         tile.draw(self.screen)
                     elif self.bot_view[row][col] == 0:
-                        tile = Token(TOKEN_GREEN_MISS, x, y)
+                        tile = Token(TOKEN_BLUE_MISS, x, y)
                         tile.draw(self.screen)
                     elif self.player_view_grid[row][col] == 1:
                         tile = Token(TOKEN_GREEN_HIT, x, y)
                         tile.draw(self.screen)
                     elif self.bot_view[row][col] == 1:
-                        tile = Token(TOKEN_GREEN_HIT, x, y)
+                        tile = Token(TOKEN_BLUE_HIT, x, y)
                         tile.draw(self.screen)
 
             pygame.display.update()

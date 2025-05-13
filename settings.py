@@ -34,7 +34,7 @@ TOKEN_BLUE_MISS = "assets/tokens/miss-2.png"
 
 # frames
 TOKEN_BLUE_MISS_LIST = "assets/animation/coop_token/miss/"
-TOKER_BLUE_HIT_LIST = "assets/animation/coop_token/hit/"
+TOKEN_BLUE_HIT_LIST = "assets/animation/coop_token/hit/"
 
 # icon
 TOKEN_TRANSPARENT = "assets/tokens/transparent.png"
