@@ -1,3 +1,4 @@
+import random
 from settings import *
 from battleship import Battleship, Orientation, set_battleship
 from battletoken import Token
@@ -55,6 +56,27 @@ class Game:
                     row = mouse_y // (PIXEL)
                     col = mouse_x // (PIXEL)
 
+                    if (self.radar_button.isClicked(mouse_x, mouse_y)):
+                        
+                        for frame in range(1, 360):
+                            TOKEN_FRAME = f"{RADAR_LIST}{frame}.png"
+                            tile = pygame.image.load(TOKEN_FRAME).convert_alpha()
+                            tile = pygame.transform.scale(tile, (11*PIXEL, 11*PIXEL))
+                            self.screen.blit(tile, (0, 0))
+                            pygame.display.update()
+                            pygame.time.delay(5)
+                        
+                        validChoice = False
+                        while not validChoice:
+                            x = random.randint(0, 9)
+                            y = random.randint(0, 9)
+                            if self.battleship_grid[x][y] == 1:
+                                validChoice = True
+
+                        coordinate = f"({x}, {y})"
+                        text = pygame.font.SysFont(None, 32, bold=True).render(coordinate, 1, (255,255,255))
+                        self.screen.blit(text, (320, 370))
+                        
                     if row == 0 or col == 0 or col == 12 or col == 11 or row>= 11:
                         continue
 

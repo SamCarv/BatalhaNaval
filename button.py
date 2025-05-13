@@ -15,6 +15,11 @@ class Button(pygame.sprite.Sprite):
         text = font.render(msg, 1, (255,255,255))
         return text
 
+    def isClicked(self, mouse_x, mouse_y):
+        if (mouse_x >= self.x and mouse_x <= self.x + 5*PIXEL) and (mouse_y >= self.y and mouse_y <= self.y + 2*PIXEL):
+            return True
+        return False
+    
     def draw(self, screen):
         image = pygame.transform.scale(self.image, (5*PIXEL, 2*PIXEL))
         screen.blit(image, (self.x, self.y))
