@@ -27,9 +27,11 @@ class Game:
             (((background_image_row * PIXEL)), (background_image_cow * PIXEL)),
         )
 
-        self.grid = [[-1 for _ in range(COLS)] for _ in range(ROWS)]
+        self.grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
         self.battleship_grid = [row[:] for row in self.grid]
         self.battleships_sprites = pygame.sprite.Group()
+        
+        self.player_view_grid = [[None for _ in range(COLS)] for _ in range(ROWS)]
 
         self.battleship_1 = Battleship(BATTLE_SHIP1X2, 2, 2, 4, Orientation.HORIZONTAL)
         self.battleship_2 = Battleship(BATTLE_SHIP1X4, 4, 5, 5, Orientation.VERTICAL)
@@ -51,20 +53,22 @@ class Game:
                     if row == 0 or col == 0 or col == 12 or col == 11:
                         continue
 
-                    if self.grid[row][col] == 1:
+                    # if self.grid[row][col] == 0:
+                    #     continue
+
+                    if self.player_view_grid[row][col] is not None:
                         continue
 
-                    if 0 <= row < ROWS and 0 <= col < COLS:
-                        self.grid[row][col] *= -1
-
-                    if self.battleship_grid[row][col] == 1:
-                        self.grid[row][col] = 1
+                    if self.battleship_grid[row][col] == 0:
+                        self.grid[row][col] = 0
+                        self.player_view_grid[row][col] = 0
                         
                         token = Token(TOKEN_GREEN_MISS, col * PIXEL, row * PIXEL, TOKEN_GREEN_MISS_LIST, 14)
                         token.animate(self.screen)
-                    
-                    elif self.battleship_grid[row][col] == 0:
-                        self.grid[row][col] = 0
+                        
+                    elif self.battleship_grid[row][col] == 1:
+                        self.grid[row][col] = 1
+                        self.player_view_grid[row][col] = 1
 
                         for battleship in self.battleships_sprites:
                             if battleship.orientation == Orientation.HORIZONTAL:
@@ -98,9 +102,9 @@ class Game:
 
                 for i in range(size):
                     if battleship.orientation == Orientation.HORIZONTAL:
-                        self.battleship_grid[battleship.y][battleship.x + i] = 0
+                        self.battleship_grid[battleship.y][battleship.x + i] = 1
                     else:
-                        self.battleship_grid[battleship.y + i][battleship.x] = 0
+                        self.battleship_grid[battleship.y + i][battleship.x] = 1
 
                 if battleship.is_sunk():
                     battleship.draw(self.screen)
@@ -110,14 +114,12 @@ class Game:
                     x = col * PIXEL
                     y = row * PIXEL
 
-                    if self.grid[row][col] == -1:
-                        tile = Token(TOKEN_TRANSPARENT, x, y)
-                    elif self.grid[row][col] == 0:
-                        tile = Token(TOKEN_GREEN_HIT, x, y)
-                    elif self.grid[row][col] == 1:
+                    if self.player_view_grid[row][col] == 0:
                         tile = Token(TOKEN_GREEN_MISS, x, y)
-
-                    tile.draw(self.screen)
+                        tile.draw(self.screen)
+                    elif self.player_view_grid[row][col] == 1:
+                        tile = Token(TOKEN_GREEN_HIT, x, y)
+                        tile.draw(self.screen)
 
             pygame.display.update()
 
