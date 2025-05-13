@@ -12,37 +12,78 @@ class Game:
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Batalha Naval")
         self.clock = pygame.time.Clock()
+        self.turn = True
 
         background_image_size = 352
         background_image_row = background_image_size // PIXEL
-        background_image_cow = background_image_size // PIXEL
+        background_image_col = background_image_size // PIXEL
 
         self.background = pygame.image.load(PLAYER_BACKGROUD).convert()
         self.background = pygame.transform.scale(
             self.background,
-            ((background_image_row * PIXEL), (background_image_cow * PIXEL)),
+            ((background_image_row * PIXEL), (background_image_col * PIXEL)),
         )
 
         self.coop_background = pygame.image.load(COOP_BACKGROUND).convert()
         self.coop_background = pygame.transform.scale(
             self.coop_background,
-            (((background_image_row * PIXEL)), (background_image_cow * PIXEL)),
+            (((background_image_row * PIXEL)), (background_image_col * PIXEL)),
         )
 
         self.grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
-        self.battleship_grid = [row[:] for row in self.grid]
+        self.battleship_grid = [row[:] for row in self.grid[: len(self.grid) // 2]]
         self.battleships_sprites = pygame.sprite.Group()
-        
+
+        self.bot_battleship_sprites = pygame.sprite.Group()
+
+        self.bot_battleship_grid = [
+            row[:] for row in self.grid[(len(self.grid) // 2) + 1 :]
+        ]
+
+        print(len(self.battleship_grid), len(self.bot_battleship_grid))
+
         self.player_view_grid = [[None for _ in range(COLS)] for _ in range(ROWS)]
 
         self.battleship_1 = Battleship(BATTLE_SHIP1X2, 2, 2, 4, Orientation.HORIZONTAL)
         self.battleship_2 = Battleship(BATTLE_SHIP1X4, 4, 5, 5, Orientation.VERTICAL)
         self.battleship_3 = Battleship(BATTLE_SHIP1X5, 5, 8, 4, Orientation.VERTICAL)
-        self.battleships_sprites.add(self.battleship_1, self.battleship_2, self.battleship_3)
+
+        self.battleships_sprites.add(
+            self.battleship_1, self.battleship_2, self.battleship_3
+        )
+
+        self.bot_battleship_1 = Battleship(
+            BATTLE_SHIP1X2, 2, 13, 2, Orientation.HORIZONTAL
+        )
+        self.bot_battleship_2 = Battleship(
+            BATTLE_SHIP1X5, 5, 15, 5, Orientation.VERTICAL
+        )
+        self.bot_battleship_3 = Battleship(
+            BATTLE_SHIP1X4, 4, 16, 7, Orientation.HORIZONTAL
+        )
+
+        self.bot_battleship_sprites.add(
+            self.bot_battleship_1, self.bot_battleship_2, self.bot_battleship_3
+        )
+
         set_battleship(self.battleships_sprites, self.battleship_grid)
         # x = 280 y = 400  limite 416
         self.radar_button = Button(RADAR_BUTTON, 280, 400, "Radar")
         self.radar_button.draw(self.screen)
+
+        self.bot_battleship_grid_already_played = [
+            row[:] for row in self.grid[(len(self.grid) // 2) :]
+        ]
+        self.bot_view = [[None for _ in range(COLS)] for _ in range(ROWS)]
+
+        for battleship in self.bot_battleship_sprites:
+            if battleship.orientation == Orientation.HORIZONTAL:
+                for i in range(battleship.size):
+                    self.bot_battleship_grid[battleship.y][battleship.x + i] = 1
+            else:
+                for i in range(battleship.size):
+                    self.bot_battleship_grid[battleship.y + i][battleship.x] = 1
+
     def run(self):
         running = True
 
@@ -50,81 +91,151 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                    row = mouse_y // (PIXEL)
-                    col = mouse_x // (PIXEL)
+                # Bot Turn
 
-                    if (self.radar_button.isClicked(mouse_x, mouse_y)):
-                        
-                        for frame in range(1, 360):
-                            TOKEN_FRAME = f"{RADAR_LIST}{frame}.png"
-                            tile = pygame.image.load(TOKEN_FRAME).convert_alpha()
-                            tile = pygame.transform.scale(tile, (11*PIXEL, 11*PIXEL))
-                            self.screen.blit(tile, (0, 0))
-                            pygame.display.update()
-                            pygame.time.delay(5)
-                        
-                        validChoice = False
-                        while not validChoice:
-                            x = random.randint(0, 9)
-                            y = random.randint(0, 9)
-                            if self.battleship_grid[x][y] == 1:
-                                validChoice = True
+                if self.turn == False:
+                    # Col - 13 até 22
+                    # Row - 1 até 10
+                    bot_x = random.randint(1, 10)
+                    bot_y = random.randint(13, 22)
 
-                        coordinate = f"({x}, {y})"
-                        text = pygame.font.SysFont(None, 32, bold=True).render(coordinate, 1, (255,255,255))
-                        self.screen.blit(text, (320, 370))
-                        
-                    if row == 0 or col == 0 or col == 12 or col == 11 or row>= 11:
-                        continue
+                    print(bot_x, bot_y)
 
-                    # if self.grid[row][col] == 0:
-                    #     continue
+                    while (
+                        self.bot_battleship_grid_already_played[bot_x][bot_y] != 2
+                        or self.bot_battleship_grid_already_played[bot_x][bot_y] == 1
+                    ):
 
-                    if self.player_view_grid[row][col] is not None:
-                        continue
+                        if self.bot_battleship_grid[bot_x][bot_y] == 0:
+                            self.bot_battleship_grid_already_played[bot_x][bot_y] = 2
+                            self.bot_view[bot_x][bot_y] = 0
 
-                    if self.battleship_grid[row][col] == 0:
-                        self.grid[row][col] = 0
-                        self.player_view_grid[row][col] = 0
-                        
-                        token = Token(TOKEN_GREEN_MISS, col * PIXEL, row * PIXEL, TOKEN_GREEN_MISS_LIST, 14)
-                        token.animate(self.screen)
-                        
-                    elif self.battleship_grid[row][col] == 1:
-                        self.grid[row][col] = 1
-                        self.player_view_grid[row][col] = 1
+                            self.turn = True
 
-                        for battleship in self.battleships_sprites:
-                            if battleship.orientation == Orientation.HORIZONTAL:
-                                if (
-                                    battleship.y == row
-                                    and battleship.x
-                                    <= col
-                                    < battleship.x + battleship.size
-                                ):
-                                    hitToken = Token(TOKEN_GREEN_HIT, col * PIXEL, row * PIXEL, TOKEN_GREEN_HIT_LIST, 14)
-                                    hitToken.animate(self.screen)
-                                    battleship.hit(col - battleship.x)
-                            else:
-                                if (
-                                    battleship.x == col
-                                    and battleship.y
-                                    <= row
-                                    < battleship.y + battleship.size
-                                ):
-                                    hitToken = Token(TOKEN_GREEN_HIT, col * PIXEL, row * PIXEL, TOKEN_GREEN_HIT_LIST, 14)
-                                    hitToken.animate(self.screen)
-                                    battleship.hit(row - battleship.y)
+                        if self.bot_battleship_grid[bot_x][bot_y] == 1:
+                            print("Achei o barco")
+
+                            self.bot_view[bot_x][bot_y] = 1
+
+                            self.turn = True
+                            break
+
+                # print(bot_x, bot_y)
+
+                # Player Turn
+                if self.turn:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                        row = mouse_y // (PIXEL)
+                        col = mouse_x // (PIXEL)
+
+                        if self.radar_button.isClicked(mouse_x, mouse_y):
+
+                            for frame in range(1, 360):
+                                TOKEN_FRAME = f"{RADAR_LIST}{frame}.png"
+                                tile = pygame.image.load(TOKEN_FRAME).convert_alpha()
+                                tile = pygame.transform.scale(
+                                    tile, (11 * PIXEL, 11 * PIXEL)
+                                )
+                                self.screen.blit(tile, (0, 0))
+                                pygame.display.update()
+                                pygame.time.delay(5)
+
+                            validChoice = False
+                            while not validChoice:
+                                x = random.randint(0, 9)
+                                y = random.randint(0, 9)
+                                if self.battleship_grid[x][y] == 1:
+                                    validChoice = True
+
+                            coordinate = f"({x}, {y})"
+                            text = pygame.font.SysFont(None, 32, bold=True).render(
+                                coordinate, 1, (255, 255, 255)
+                            )
+                            self.screen.blit(text, (320, 370))
+
+                        if (
+                            row == 0
+                            or col == 0
+                            or col == 12
+                            or col == 11
+                            or row >= 11
+                            or col >= 12
+                        ):
+                            continue
+
+                        # if self.grid[row][col] == 0:
+                        #     continue
+
+                        if self.player_view_grid[row][col] is not None:
+                            continue
+
+                        if self.battleship_grid[row][col] == 0:
+                            self.turn = False
+
+                            self.grid[row][col] = 0
+                            self.player_view_grid[row][col] = 0
+
+                            token = Token(
+                                TOKEN_GREEN_MISS,
+                                col * PIXEL,
+                                row * PIXEL,
+                                TOKEN_GREEN_MISS_LIST,
+                                3,
+                            )
+                            token.animate(self.screen)
+
+                        elif self.battleship_grid[row][col] == 1:
+                            self.turn = False
+
+                            self.grid[row][col] = 1
+                            self.player_view_grid[row][col] = 1
+
+                            for battleship in self.battleships_sprites:
+                                if battleship.orientation == Orientation.HORIZONTAL:
+                                    if (
+                                        battleship.y == row
+                                        and battleship.x
+                                        <= col
+                                        < battleship.x + battleship.size
+                                    ):
+                                        hitToken = Token(
+                                            TOKEN_GREEN_HIT,
+                                            col * PIXEL,
+                                            row * PIXEL,
+                                            TOKEN_GREEN_HIT_LIST,
+                                            3,
+                                        )
+                                        hitToken.animate(self.screen)
+                                        battleship.hit(col - battleship.x)
+                                else:
+                                    if (
+                                        battleship.x == col
+                                        and battleship.y
+                                        <= row
+                                        < battleship.y + battleship.size
+                                    ):
+                                        hitToken = Token(
+                                            TOKEN_GREEN_HIT,
+                                            col * PIXEL,
+                                            row * PIXEL,
+                                            TOKEN_GREEN_HIT_LIST,
+                                            3,
+                                        )
+                                        hitToken.animate(self.screen)
+                                        battleship.hit(row - battleship.y)
 
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(self.coop_background, (384, 0))
 
-
             for battleship in self.battleships_sprites:
                 if battleship.is_sunk():
+                    battleship.draw(self.screen)
+
+            for battleship in self.bot_battleship_sprites:
+                if not battleship.is_sunk():
                     battleship.draw(self.screen)
 
             for row in range(ROWS):
@@ -135,7 +246,13 @@ class Game:
                     if self.player_view_grid[row][col] == 0:
                         tile = Token(TOKEN_GREEN_MISS, x, y)
                         tile.draw(self.screen)
+                    elif self.bot_view[row][col] == 0:
+                        tile = Token(TOKEN_GREEN_MISS, x, y)
+                        tile.draw(self.screen)
                     elif self.player_view_grid[row][col] == 1:
+                        tile = Token(TOKEN_GREEN_HIT, x, y)
+                        tile.draw(self.screen)
+                    elif self.bot_view[row][col] == 1:
                         tile = Token(TOKEN_GREEN_HIT, x, y)
                         tile.draw(self.screen)
 
