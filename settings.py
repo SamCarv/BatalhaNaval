@@ -1,7 +1,7 @@
 import pygame
 
 WINDOW_WIDTH = 736
-WINDOW_HEIGHT = 352
+WINDOW_HEIGHT = 480
 PIXEL = 32
 
 COLS = WINDOW_WIDTH // PIXEL
@@ -38,3 +38,7 @@ TOKER_BLUE_HIT_LIST = "assets/animation/coop_token/hit/"
 
 # icon
 TOKEN_TRANSPARENT = "assets/tokens/transparent.png"
+
+RADAR_LIST = "assets/animation/radar/"
+
+RADAR_BUTTON = "assets/button/button.png"

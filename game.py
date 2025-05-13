@@ -1,6 +1,7 @@
 from settings import *
-from battleship import Battleship, Orientation
+from battleship import Battleship, Orientation, set_battleship
 from battletoken import Token
+from button import Button
 import pygame
 
 
@@ -35,8 +36,12 @@ class Game:
 
         self.battleship_1 = Battleship(BATTLE_SHIP1X2, 2, 2, 4, Orientation.HORIZONTAL)
         self.battleship_2 = Battleship(BATTLE_SHIP1X4, 4, 5, 5, Orientation.VERTICAL)
-        self.battleships_sprites.add(self.battleship_1, self.battleship_2)
-
+        self.battleship_3 = Battleship(BATTLE_SHIP1X5, 5, 8, 4, Orientation.VERTICAL)
+        self.battleships_sprites.add(self.battleship_1, self.battleship_2, self.battleship_3)
+        set_battleship(self.battleships_sprites, self.battleship_grid)
+        # x = 280 y = 400  limite 416
+        self.radar_button = Button(RADAR_BUTTON, 280, 400, "Radar")
+        self.radar_button.draw(self.screen)
     def run(self):
         running = True
 
@@ -50,7 +55,7 @@ class Game:
                     row = mouse_y // (PIXEL)
                     col = mouse_x // (PIXEL)
 
-                    if row == 0 or col == 0 or col == 12 or col == 11:
+                    if row == 0 or col == 0 or col == 12 or col == 11 or row>= 11:
                         continue
 
                     # if self.grid[row][col] == 0:
@@ -95,17 +100,8 @@ class Game:
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(self.coop_background, (384, 0))
 
-            # Render Game
-            # Carregas barcos
+
             for battleship in self.battleships_sprites:
-                size = battleship.size
-
-                for i in range(size):
-                    if battleship.orientation == Orientation.HORIZONTAL:
-                        self.battleship_grid[battleship.y][battleship.x + i] = 1
-                    else:
-                        self.battleship_grid[battleship.y + i][battleship.x] = 1
-
                 if battleship.is_sunk():
                     battleship.draw(self.screen)
 

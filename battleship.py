@@ -7,7 +7,6 @@ class Orientation(Enum):
     HORIZONTAL = 0
     VERTICAL = 1
 
-
 class Battleship(pygame.sprite.Sprite):
     def __init__(self, img, size, x, y, orientation):
         super().__init__()
@@ -34,4 +33,12 @@ class Battleship(pygame.sprite.Sprite):
         else:
             screen.blit(self.image, (self.x * PIXEL, self.y * PIXEL))
 
+def set_battleship(battleships_sprites, battleship_grid):
+    for battleship in battleships_sprites:
+        size = battleship.size
+        for i in range(size):
+            if battleship.orientation == Orientation.HORIZONTAL:
+                battleship_grid[battleship.y][battleship.x + i] = 1
+            else:
+                battleship_grid[battleship.y + i][battleship.x] = 1
     
