@@ -181,14 +181,14 @@ class Game:
                             while not validChoice:
                                 x = random.randint(0, 9)
                                 y = random.randint(0, 9)
-                                if self.battleship_grid[x][y] == 1:
+                                if self.battleship_grid[x][y] == 1 and self.player_view_grid[x][y] is None:
                                     validChoice = True
 
-                            coordinate = f"({x}, {y})"
+                            coordinate = f"({y}, {x})"
                             text = pygame.font.SysFont(None, 32, bold=True).render(
                                 coordinate, 1, (255, 255, 255)
                             )
-                            self.screen.blit(text, (320, 370))
+                            self.screen.blit(text, (300, 370))
 
                         if (
                             row == 0
