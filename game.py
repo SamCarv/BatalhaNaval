@@ -44,23 +44,57 @@ class Game:
 
         self.player_view_grid = [[None for _ in range(COLS)] for _ in range(ROWS)]
 
-        self.battleship_1 = Battleship(BATTLE_SHIP1X2, 2, 2, 4, Orientation.HORIZONTAL)
-        self.battleship_2 = Battleship(BATTLE_SHIP1X4, 4, 5, 5, Orientation.VERTICAL)
-        self.battleship_3 = Battleship(BATTLE_SHIP1X5, 5, 8, 4, Orientation.VERTICAL)
+        def generate_random_battleship(sprite, size):
+            while True:
+                orientation = random.choice(list(Orientation))
+                if orientation == Orientation.HORIZONTAL:
+                    x = random.randint(1, 10 - size)
+                    y = random.randint(1, len(self.battleship_grid) - 2)
+                    if all(self.battleship_grid[y][x + i] == 0 for i in range(size)):
+                        for i in range(size):
+                            self.battleship_grid[y][x + i] = 1
+                        return Battleship(sprite, size, x, y, orientation)
+                else:
+                    x = random.randint(1, 10 - 1)
+                    y = random.randint(1, len(self.battleship_grid) - size)
+                    if all(self.battleship_grid[y + i][x] == 0 for i in range(size)):
+                        for i in range(size):
+                            self.battleship_grid[y + i][x] = 1
+                        return Battleship(sprite, size, x, y, orientation)
+
+        def generate_random_bot_battleship(sprite, size):
+            while True:
+                orientation = random.choice(list(Orientation))
+                if orientation == Orientation.HORIZONTAL:
+                    x = random.randint(13, 22 - size)
+                    y = random.randint(0, len(self.bot_battleship_grid) - 1)
+                    if all(
+                        self.bot_battleship_grid[y][x + i] == 0 for i in range(size)
+                    ):
+                        for i in range(size):
+                            self.bot_battleship_grid[y][x + i] = 1
+                        return Battleship(sprite, size, x, y, orientation)
+                else:
+                    x = random.randint(13, 22 - 1)
+                    y = random.randint(0, len(self.bot_battleship_grid) - size)
+                    if all(
+                        self.bot_battleship_grid[y + i][x] == 0 for i in range(size)
+                    ):
+                        for i in range(size):
+                            self.bot_battleship_grid[y + i][x] = 1
+                        return Battleship(sprite, size, x, y, orientation)
+
+        self.battleship_1 = generate_random_battleship(BATTLE_SHIP1X2, 2)
+        self.battleship_2 = generate_random_battleship(BATTLE_SHIP1X4, 4)
+        self.battleship_3 = generate_random_battleship(BATTLE_SHIP1X5, 5)
 
         self.battleships_sprites.add(
             self.battleship_1, self.battleship_2, self.battleship_3
         )
 
-        self.bot_battleship_1 = Battleship(
-            BATTLE_SHIP1X2, 2, 13, 2, Orientation.HORIZONTAL
-        )
-        self.bot_battleship_2 = Battleship(
-            BATTLE_SHIP1X5, 5, 15, 5, Orientation.VERTICAL
-        )
-        self.bot_battleship_3 = Battleship(
-            BATTLE_SHIP1X4, 4, 16, 7, Orientation.HORIZONTAL
-        )
+        self.bot_battleship_1 = generate_random_bot_battleship(BATTLE_SHIP1X2, 2)
+        self.bot_battleship_2 = generate_random_bot_battleship(BATTLE_SHIP1X4, 4)
+        self.bot_battleship_3 = generate_random_bot_battleship(BATTLE_SHIP1X5, 5)
 
         self.bot_battleship_sprites.add(
             self.bot_battleship_1, self.bot_battleship_2, self.bot_battleship_3
