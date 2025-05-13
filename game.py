@@ -67,7 +67,7 @@ class Game:
                 orientation = random.choice(list(Orientation))
                 if orientation == Orientation.HORIZONTAL:
                     x = random.randint(13, 22 - size)
-                    y = random.randint(0, len(self.bot_battleship_grid) - 1)
+                    y = random.randint(1, len(self.bot_battleship_grid) - 1)
                     if all(
                         self.bot_battleship_grid[y][x + i] == 0 for i in range(size)
                     ):
@@ -76,7 +76,7 @@ class Game:
                         return Battleship(sprite, size, x, y, orientation)
                 else:
                     x = random.randint(13, 22 - 1)
-                    y = random.randint(0, len(self.bot_battleship_grid) - size)
+                    y = random.randint(1, len(self.bot_battleship_grid) - size)
                     if all(
                         self.bot_battleship_grid[y + i][x] == 0 for i in range(size)
                     ):
