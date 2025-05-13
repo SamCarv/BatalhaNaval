@@ -1,5 +1,6 @@
 from settings import *
 from battleship import Battleship, Orientation
+from battletoken import Token
 import pygame
 
 
@@ -55,6 +56,10 @@ class Game:
 
                     if self.battleship_grid[row][col] == 1:
                         self.grid[row][col] = 1
+                        
+                        token = Token(TOKEN_GREEN_MISS, col * PIXEL, row * PIXEL, TOKEN_GREEN_MISS_LIST, 14)
+                        token.animate(self.screen)
+                    
                     elif self.battleship_grid[row][col] == 0:
                         self.grid[row][col] = 0
 
@@ -66,6 +71,8 @@ class Game:
                                     <= col
                                     < battleship.x + battleship.size
                                 ):
+                                    hitToken = Token(TOKEN_GREEN_HIT, col * PIXEL, row * PIXEL, TOKEN_GREEN_HIT_LIST, 14)
+                                    hitToken.animate(self.screen)
                                     battleship.hit(col - battleship.x)
                             else:
                                 if (
@@ -74,6 +81,8 @@ class Game:
                                     <= row
                                     < battleship.y + battleship.size
                                 ):
+                                    hitToken = Token(TOKEN_GREEN_HIT, col * PIXEL, row * PIXEL, TOKEN_GREEN_HIT_LIST, 14)
+                                    hitToken.animate(self.screen)
                                     battleship.hit(row - battleship.y)
 
             self.screen.blit(self.background, (0, 0))
@@ -99,13 +108,13 @@ class Game:
                     y = row * PIXEL
 
                     if self.grid[row][col] == -1:
-                        tile = pygame.image.load(TOKEN_TRANSPARENT).convert_alpha()
+                        tile = Token(TOKEN_TRANSPARENT, x, y)
                     elif self.grid[row][col] == 0:
-                        tile = pygame.image.load(TOKEN_GREEN_HIT).convert_alpha()
+                        tile = Token(TOKEN_GREEN_HIT, x, y)
                     elif self.grid[row][col] == 1:
-                        tile = pygame.image.load(TOKEN_GREEN_MISS).convert_alpha()
+                        tile = Token(TOKEN_GREEN_MISS, x, y)
 
-                    self.screen.blit(tile, (x, y))
+                    tile.draw(self.screen)
 
             pygame.display.update()
 
