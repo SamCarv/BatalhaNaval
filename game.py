@@ -3,6 +3,7 @@ from settings import *
 from battleship import Battleship, Orientation, set_battleship
 from battletoken import Token
 from button import Button
+from endgame import Endgame
 import pygame
 
 
@@ -120,6 +121,7 @@ class Game:
 
     def run(self):
         running = True
+        action = None
 
         while running:
             for event in pygame.event.get():
@@ -223,9 +225,6 @@ class Game:
                         ):
                             continue
 
-                        # if self.grid[row][col] == 0:
-                        #     continue
-
                         if self.player_view_grid[row][col] is not None:
                             continue
 
@@ -267,6 +266,7 @@ class Game:
                                         )
                                         hitToken.animate(self.screen)
                                         battleship.hit(col - battleship.x)
+
                                 else:
                                     if (
                                         battleship.x == col
@@ -312,6 +312,19 @@ class Game:
                     elif self.bot_view[row][col] == 1:
                         tile = Token(TOKEN_BLUE_HIT, x, y)
                         tile.draw(self.screen)
+            if all(ship.is_sunk() for ship in self.battleships_sprites):
+                endgame_screen = Endgame(self.screen, "You Win!", row, col)
+                action = endgame_screen.run()
+            
+            elif all(ship.is_sunk() for ship in self.bot_battleship_sprites):
+                endgame_screen = Endgame(self.screen, "You Lose!", row, col)
+                action = endgame_screen.run()
+
+            if action == "retry":
+                self.__init__()
+                return
+            elif action == "quit":
+                running = False
 
             pygame.display.update()
 

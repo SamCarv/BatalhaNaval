@@ -42,3 +42,9 @@ TOKEN_TRANSPARENT = "assets/tokens/transparent.png"
 RADAR_LIST = "assets/animation/radar/"
 
 RADAR_BUTTON = "assets/button/button.png"
+
+# cannon
+
+CANNON_MOVE = "assets/animation/cannon_move/"
+CANNON_SHOOT = "assets/animation/cannon_shoot/"
+CANNON_BALL = "assets/animation/cannon_ball/"
