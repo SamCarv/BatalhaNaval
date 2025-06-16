@@ -311,7 +311,9 @@ class Game:
                 for col in range(COLS):
                     x = col * PIXEL
                     y = row * PIXEL
-
+                    # verificação do elemento (x,y) clicado
+                    # 0 para lugares onde não há navio
+                    # 1 para lugares onde existem parte do navio
                     if self.player_view_grid[row][col] == 0:
                         tile = Token(TOKEN_GREEN_MISS, x, y)
                         tile.draw(self.screen)
@@ -324,6 +326,7 @@ class Game:
                     elif self.bot_view[row][col] == 1:
                         tile = Token(TOKEN_BLUE_HIT, x, y)
                         tile.draw(self.screen)
+            
             if all(ship.is_sunk() for ship in self.battleships_sprites):
                 endgame_screen = Endgame(self.screen, "You Win!", row, col)
                 action = endgame_screen.run()
