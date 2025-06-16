@@ -19,9 +19,15 @@ class Game:
         background_image_row = background_image_size // PIXEL
         background_image_col = background_image_size // PIXEL
 
-        self.background = pygame.image.load(PLAYER_BACKGROUD).convert()
+        self.background = pygame.image.load(GAME_BACKGROUND).convert()
         self.background = pygame.transform.scale(
             self.background,
+            ((23 * PIXEL), (22 * PIXEL)),
+        )
+
+        self.player_background = pygame.image.load(PLAYER_BACKGROUD).convert()
+        self.player_background = pygame.transform.scale(
+            self.player_background,
             ((background_image_row * PIXEL), (background_image_col * PIXEL)),
         )
 
@@ -102,7 +108,9 @@ class Game:
         )
 
         set_battleship(self.battleships_sprites, self.battleship_grid)
-        # x = 280 y = 400  limite 416
+
+        self.screen.blit(self.background, (0,0))
+
         self.radar_button = Button(RADAR_BUTTON, 280, 400, "Radar")
         self.radar_button.draw(self.screen)
 
@@ -193,9 +201,9 @@ class Game:
                                 TOKEN_FRAME = f"{RADAR_LIST}{frame}.png"
                                 tile = pygame.image.load(TOKEN_FRAME).convert_alpha()
                                 tile = pygame.transform.scale(
-                                    tile, (11 * PIXEL, 11 * PIXEL)
+                                    tile, (10 * PIXEL, 10 * PIXEL)
                                 )
-                                self.screen.blit(tile, (0, 0))
+                                self.screen.blit(tile, (1 * PIXEL, 1 * PIXEL))
                                 pygame.display.update()
                                 pygame.time.delay(5)
 
@@ -207,12 +215,8 @@ class Game:
                                     validChoice = True
 
                             coordinate = f"({y}, {x})"
-                            text = pygame.font.SysFont(None, 32, bold=True).render(
-                                coordinate, 1, (255, 255, 255)
-                            )
-                            pygame.draw.rect(self.screen, (0, 0, 0), (320, 370, 100, 30))
                             font = pygame.font.SysFont(None, 32, bold=True)
-                            text = font.render(coordinate, True, (255, 255, 255))
+                            text = font.render(coordinate, True, (0,0,0))
                             self.screen.blit(text, (330, 370))
 
                         if (
@@ -284,7 +288,7 @@ class Game:
                                         hitToken.animate(self.screen)
                                         battleship.hit(row - battleship.y)
 
-            self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.player_background, (0, 0))
             self.screen.blit(self.coop_background, (384, 0))
 
             for battleship in self.battleships_sprites:

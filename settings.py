@@ -12,6 +12,7 @@ BACKGROUND = (255, 255, 255)
 BATTLESHIP_COLOR = (255, 0, 0)
 WITHOUT_BATTLESHIP = (0, 0, 0)
 
+GAME_BACKGROUND = "assets/background/background.jpeg"
 PLAYER_BACKGROUD = "assets/background/radargrid.png"
 COOP_BACKGROUND = "assets/background/oceangrid.png"
 
@@ -44,7 +45,6 @@ RADAR_LIST = "assets/animation/radar/"
 RADAR_BUTTON = "assets/button/button.png"
 
 # cannon
-
 CANNON_MOVE = "assets/animation/cannon_move/"
 CANNON_SHOOT = "assets/animation/cannon_shoot/"
 CANNON_BALL = "assets/animation/cannon_ball/"
