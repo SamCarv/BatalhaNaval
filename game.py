@@ -37,19 +37,28 @@ class Game:
             (((background_image_row * PIXEL)), (background_image_col * PIXEL)),
         )
 
+        # Representa a matrix total, que é definido pela largura do jogo 736 pixel divido pelo tamanho das imagens, que é de 32 pixel, e pelo tamanho 480/32. Ficando 23 colunas e 15 linhas
         self.grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
+
+        # A matrix que irá gerenciar os barcos do player, que irá pegar metade das colunas da matrix principal, 23 // 2 fica 11 colunas para o player.
         self.battleship_grid = [row[:] for row in self.grid[: len(self.grid) // 2]]
-        self.battleships_sprites = pygame.sprite.Group()
 
-        self.bot_battleship_sprites = pygame.sprite.Group()
+        # Uma 3 layer que irá ser reponsável por mostrar as imagens e animações.
+        self.player_view_grid = [[None for _ in range(COLS)] for _ in range(ROWS)]
 
+        # Responsável por mostrar as imagens e animações dos bots inimigos.
+        self.bot_view = [[None for _ in range(COLS)] for _ in range(ROWS)]
+
+        # Irá gerenciar os barcos do inimigo,pegando a outra metade de colunas faltando da matrix principal.
         self.bot_battleship_grid = [
             row[:] for row in self.grid[(len(self.grid) // 2) + 1 :]
         ]
 
-        print(len(self.battleship_grid), len(self.bot_battleship_grid))
+        self.battleships_sprites = pygame.sprite.Group()
 
-        self.player_view_grid = [[None for _ in range(COLS)] for _ in range(ROWS)]
+        self.bot_battleship_sprites = pygame.sprite.Group()
+
+        print(len(self.battleship_grid), len(self.bot_battleship_grid))
 
         def generate_random_battleship(sprite, size):
             while True:
@@ -109,15 +118,10 @@ class Game:
 
         set_battleship(self.battleships_sprites, self.battleship_grid)
 
-        self.screen.blit(self.background, (0,0))
+        self.screen.blit(self.background, (0, 0))
 
         self.radar_button = Button(RADAR_BUTTON, 280, 400, "Radar")
         self.radar_button.draw(self.screen)
-
-        self.bot_battleship_grid_already_played = [
-            row[:] for row in self.grid[(len(self.grid) // 2) :]
-        ]
-        self.bot_view = [[None for _ in range(COLS)] for _ in range(ROWS)]
 
         for battleship in self.bot_battleship_sprites:
             if battleship.orientation == Orientation.HORIZONTAL:
@@ -147,14 +151,13 @@ class Game:
                     print(bot_x, bot_y)
 
                     while (
-                        self.bot_battleship_grid_already_played[bot_x][bot_y] != 2
-                        or self.bot_battleship_grid_already_played[bot_x][bot_y] == 1
+                        self.bot_view[bot_x][bot_y] != 0
+                        or self.bot_view[bot_x][bot_y] == 1
                     ):
 
                         if self.bot_battleship_grid[bot_x][bot_y] == 0:
-                            self.bot_battleship_grid_already_played[bot_x][bot_y] = 2
+                            self.bot_view[bot_x][bot_y] = 2
                             self.bot_view[bot_x][bot_y] = 0
-                            
 
                             missToken = Token(
                                 TOKEN_BLUE_MISS,
@@ -163,16 +166,14 @@ class Game:
                                 TOKEN_BLUE_MISS_LIST,
                                 13,
                             )
-                            
+
                             missToken.animate(self.screen)
-                            
+
                             self.turn = True
 
                         if self.bot_battleship_grid[bot_x][bot_y] == 1:
-                            print("Achei o barco")
-
                             self.bot_view[bot_x][bot_y] = 1
-                            
+
                             tokenHit = Token(
                                 TOKEN_BLUE_HIT,
                                 bot_y * PIXEL,
@@ -195,8 +196,10 @@ class Game:
                         row = mouse_y // (PIXEL)
                         col = mouse_x // (PIXEL)
 
+                        # Quando clicar no botão do radar
                         if self.radar_button.isClicked(mouse_x, mouse_y):
 
+                            # Irá percorrer todos as imagens gerando a animação do radar girando
                             for frame in range(1, 360):
                                 TOKEN_FRAME = f"{RADAR_LIST}{frame}.png"
                                 tile = pygame.image.load(TOKEN_FRAME).convert_alpha()
@@ -208,15 +211,20 @@ class Game:
                                 pygame.time.delay(5)
 
                             validChoice = False
+                            # Enquanto o validChoice for False, irá gerar números aleatórios para x e y, quando (x, y) for uma posição válida e já não tenha sido selecionado,
                             while not validChoice:
                                 x = random.randint(0, 9)
                                 y = random.randint(0, 9)
-                                if self.battleship_grid[x][y] == 1 and self.player_view_grid[x][y] is None:
+                                if (
+                                    self.battleship_grid[x][y] == 1
+                                    and self.player_view_grid[x][y] is None
+                                ):
                                     validChoice = True
 
+                            # Mostrar na tela as coordenadas selecionadas.
                             coordinate = f"({y}, {x})"
                             font = pygame.font.SysFont(None, 32, bold=True)
-                            text = font.render(coordinate, True, (0,0,0))
+                            text = font.render(coordinate, True, (0, 0, 0))
                             self.screen.blit(text, (330, 370))
 
                         if (
@@ -319,7 +327,7 @@ class Game:
             if all(ship.is_sunk() for ship in self.battleships_sprites):
                 endgame_screen = Endgame(self.screen, "You Win!", row, col)
                 action = endgame_screen.run()
-            
+
             elif all(ship.is_sunk() for ship in self.bot_battleship_sprites):
                 endgame_screen = Endgame(self.screen, "You Lose!", row, col)
                 action = endgame_screen.run()
